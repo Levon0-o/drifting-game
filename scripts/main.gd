@@ -5,6 +5,7 @@ const CAMERA_SCRIPT = preload("res://scripts/follow_camera.gd")
 
 var world_root: Node3D
 var car: DriftCar
+var chase_camera: Camera3D
 var hud: CanvasLayer
 var score_label: Label
 var combo_label: Label
@@ -15,6 +16,7 @@ var current_map: int = 0
 var map_names := ["PARKING LOT", "CITY BLOCK", "TOUGE ROAD"]
 
 func _ready() -> void:
+    process_mode = Node.PROCESS_MODE_ALWAYS
     _configure_input()
     world_root = Node3D.new()
     world_root.name = "World"
@@ -175,9 +177,8 @@ func _build_car_visuals(target: DriftCar) -> void:
             target.add_child(wheel)
 
 func _spawn_car() -> void:
-    car = DriftCar.new()
+    car = CAR_SCRIPT.new() as DriftCar
     car.name = "PlayerCar"
-    car.set_script(CAR_SCRIPT)
     car.position = Vector3(0.0, 0.15, 0.0)
 
     var collision := CollisionShape3D.new()
@@ -189,17 +190,16 @@ func _spawn_car() -> void:
     _build_car_visuals(car)
     add_child(car)
 
-    var spring_arm := SpringArm3D.new()
-    spring_arm.spring_length = 8.0
-    spring_arm.position = Vector3(0.0, 3.1, 0.0)
-    spring_arm.rotation_degrees.x = -12.0
-    car.add_child(spring_arm)
-
-    var camera := Camera3D.new()
-    camera.current = true
-    camera.fov = 75.0
-    camera.position = Vector3(0.0, 0.0, 8.0)
-    spring_arm.add_child(camera)
+    if chase_camera != null:
+        chase_camera.queue_free()
+    chase_camera = CAMERA_SCRIPT.new() as Camera3D
+    chase_camera.name = "ChaseCamera"
+    chase_camera.target = car
+    chase_camera.current = true
+    chase_camera.fov = 75.0
+    chase_camera.global_position = car.global_position + Vector3(0.0, 4.0, 8.5)
+    add_child(chase_camera)
+    chase_camera.look_at(car.global_position + Vector3.UP * 0.9, Vector3.UP)
 
 func _build_hud() -> void:
     hud = CanvasLayer.new()
@@ -253,13 +253,13 @@ func _process(_delta: float) -> void:
     speed_label.text = "SPEED  %03d KM/H" % int(absf(car.forward_speed) * 3.6)
     angle_label.text = "DRIFT ANGLE  %.0f°" % absf(car.drift_angle)
 
-    if Input.is_key_pressed(KEY_ESCAPE):
+    if Input.is_key_just_pressed(KEY_ESCAPE):
         get_tree().paused = not get_tree().paused
-    if Input.is_key_pressed(KEY_1) and current_map != 0:
+    if Input.is_key_just_pressed(KEY_1) and current_map != 0:
         _switch_map(0)
-    elif Input.is_key_pressed(KEY_2) and current_map != 1:
+    elif Input.is_key_just_pressed(KEY_2) and current_map != 1:
         _switch_map(1)
-    elif Input.is_key_pressed(KEY_3) and current_map != 2:
+    elif Input.is_key_just_pressed(KEY_3) and current_map != 2:
         _switch_map(2)
 
 func _switch_map(index: int) -> void:
@@ -267,6 +267,9 @@ func _switch_map(index: int) -> void:
     if car != null:
         car.queue_free()
         car = null
+    if chase_camera != null:
+        chase_camera.queue_free()
+        chase_camera = null
     for child in world_root.get_children():
         child.queue_free()
     await get_tree().process_frame
