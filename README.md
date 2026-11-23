@@ -1,33 +1,59 @@
-# SLIDE CULT — v0.1.0
+# SLIDE CULT
 
-Starter prototype for Godot 4.
+**A keyboard-first 3D drift game prototype built with Godot 4.**
+
+SLIDE CULT is an early-stage arcade drift project. The current milestone focuses on a responsive third-person driving loop, drift scoring, combo chaining, and three greybox environments. Art and vehicle handling are deliberately being iterated before expanding the garage and progression systems.
 
 ## Requirements
-- Godot Engine 4.3 or newer (4.x recommended)
-- Windows, Linux, or macOS
 
-## Run
-1. Extract the ZIP.
+- Godot Engine 4.3 or newer (Godot 4.x)
+- Windows, Linux, or macOS
+- Keyboard; no mouse is required during driving
+
+## Run locally
+
+1. Clone or download this repository.
 2. Open Godot Project Manager.
-3. Choose Import and select `project.godot`.
-4. Open the project and press F6/F5 (or the Play button).
+3. Select **Import** and choose the repository's `project.godot`.
+4. Open the project and press **F6/F5** or the Play button.
 
 ## Controls
-- Arrow keys or WASD: drive
-- Shift or Space: handbrake
-- R: reset car
-- 1 / 2 / 3: switch map (parking / city / touge)
 
-## What's in this prototype
+| Key | Action |
+| --- | --- |
+| Arrow keys / WASD | Steer and accelerate / brake |
+| Shift / Space | Handbrake |
+| R | Reset car |
+| 1 | Parking lot |
+| 2 | City block |
+| 3 | Touge road |
+| Esc | Pause / resume |
+
+## Current prototype
+
 - Third-person chase camera
-- Keyboard driving and handbrake
-- Basic arcade drift model
-- Drift angle, score and combo HUD
-- Three blockout environments
+- Keyboard-only driving controls
+- Arcade vehicle controller with lateral slip and handbrake grip
+- Drift angle, session score, combo multiplier, and speed HUD
+- Three procedural greybox environments: parking lot, city block, and touge
+- Reset and map switching
 
-## Important
-This is an early playable foundation, not a finished realistic racing game.
-The current car and environments are greybox/procedural placeholders. The next
-development pass should improve vehicle dynamics, add wheel visuals/steering,
-build proper track geometry, add a garage and selectable cars, and replace
-placeholder assets with optimized art.
+## Project structure
+
+```
+project.godot
+scenes/
+  Main.tscn
+scripts/
+  main.gd
+  car_controller.gd
+  follow_camera.gd
+docs/
+  ROADMAP.md
+```
+
+## Development status
+
+This is **not a finished realistic simulator**. The car and environments are procedural placeholders. The immediate next steps are to tune the handling, improve collision/track geometry, add wheel animation and tire effects, and then build the garage and car selection flow.
+
+See [docs/ROADMAP.md](docs/ROADMAP.md) for milestones.
