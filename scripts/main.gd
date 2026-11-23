@@ -253,14 +253,29 @@ func _process(_delta: float) -> void:
     speed_label.text = "SPEED  %03d KM/H" % int(absf(car.forward_speed) * 3.6)
     angle_label.text = "DRIFT ANGLE  %.0f°" % absf(car.drift_angle)
 
-    if Input.is_key_just_pressed(KEY_ESCAPE):
-        get_tree().paused = not get_tree().paused
-    if Input.is_key_just_pressed(KEY_1) and current_map != 0:
-        _switch_map(0)
-    elif Input.is_key_just_pressed(KEY_2) and current_map != 1:
-        _switch_map(1)
-    elif Input.is_key_just_pressed(KEY_3) and current_map != 2:
-        _switch_map(2)
+func _unhandled_key_input(event: InputEvent) -> void:
+    if not event is InputEventKey:
+        return
+    var key_event := event as InputEventKey
+    if not key_event.pressed or key_event.echo:
+        return
+
+    match key_event.physical_keycode:
+        KEY_ESCAPE:
+            get_tree().paused = not get_tree().paused
+            get_viewport().set_input_as_handled()
+        KEY_1:
+            if current_map != 0:
+                _switch_map(0)
+            get_viewport().set_input_as_handled()
+        KEY_2:
+            if current_map != 1:
+                _switch_map(1)
+            get_viewport().set_input_as_handled()
+        KEY_3:
+            if current_map != 2:
+                _switch_map(2)
+            get_viewport().set_input_as_handled()
 
 func _switch_map(index: int) -> void:
     current_map = index
