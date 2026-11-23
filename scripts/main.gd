@@ -5,7 +5,7 @@ const CAMERA_SCRIPT = preload("res://scripts/follow_camera.gd")
 
 var world_root: Node3D
 var car: DriftCar
-var chase_camera: Camera3D
+var chase_camera: DriftFollowCamera
 var hud: CanvasLayer
 var score_label: Label
 var combo_label: Label
@@ -192,7 +192,7 @@ func _spawn_car() -> void:
 
     if chase_camera != null:
         chase_camera.queue_free()
-    chase_camera = CAMERA_SCRIPT.new() as Camera3D
+    chase_camera = CAMERA_SCRIPT.new() as DriftFollowCamera
     chase_camera.name = "ChaseCamera"
     chase_camera.target = car
     chase_camera.current = true
